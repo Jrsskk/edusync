@@ -71,10 +71,18 @@ class SyncTest extends TestCase
 
         $token = $student->createToken('test')->plainTextToken;
 
-        $this->withToken($token)->postJson('/api/v1/sync', $payload)->assertOk();
+        $this->withToken($token)->postJson('/api/v1/sync', $payload)
+            ->assertOk()
+            ->assertJsonPath('data.sync_uuid', $uuid)
+            ->assertJsonPath('data.status', 'synced');
         $this->withToken($token)->postJson('/api/v1/sync', $payload)->assertOk();
 
         $this->assertEquals(1, \App\Models\QuizAttempt::where('sync_uuid', $uuid)->count());
+        $this->assertDatabaseHas('quiz_attempts', [
+            'sync_uuid' => $uuid,
+            'student_id' => $student->id,
+            'quiz_id' => $quiz->id,
+        ]);
     }
 
     public function test_sync_uuid_cannot_be_reused_for_a_different_quiz_payload(): void

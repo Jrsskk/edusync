@@ -9,11 +9,19 @@ use App\Http\Controllers\Api\V1\GradeController;
 use App\Http\Controllers\Api\V1\MaterialController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\QuizController;
+use App\Http\Controllers\Api\V1\StudentRegistrationController;
 use App\Http\Controllers\Api\V1\SubmissionController;
 use App\Http\Controllers\Api\V1\SyncController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
+    Route::post('/register', [StudentRegistrationController::class, 'register'])
+        ->middleware('throttle:5,1');
+    Route::post('/email/verification-notification', [StudentRegistrationController::class, 'resendVerification'])
+        ->middleware('throttle:6,1');
+    Route::get('/email/verify/{id}/{hash}', [StudentRegistrationController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('email.verify');
     Route::post('/login', [AuthController::class, 'login']);
 
     // This is the student mobile API. Teacher and admin workflows remain on

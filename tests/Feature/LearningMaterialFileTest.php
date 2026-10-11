@@ -548,7 +548,11 @@ class LearningMaterialFileTest extends TestCase
         $this->assertStringContainsString('/student/materials/'.$material->id.'/secure-file?', $viewUrl);
         $this->assertStringContainsString('signature=', $viewUrl);
         $this->assertStringContainsString('signature=', $downloadUrl);
-        $this->get($viewUrl)->assertOk();
+        $view = $this->get($viewUrl)->assertOk();
+        $this->assertStringContainsString(
+            'inline',
+            strtolower((string) $view->headers->get('Content-Disposition')),
+        );
         $signedDownload = $this->get($downloadUrl);
         $signedDownload->assertOk();
         $this->assertStringContainsString('attachment', strtolower((string) $signedDownload->headers->get('Content-Disposition')));

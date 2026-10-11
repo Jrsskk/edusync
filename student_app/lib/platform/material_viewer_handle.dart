@@ -1,0 +1,3 @@
+class MaterialViewerHandle {
+  const MaterialViewerHandle();
+}

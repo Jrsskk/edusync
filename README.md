@@ -185,11 +185,15 @@ production drivers and persistent storage before serving real users.
 Authenticate via Sanctum:
 
 ```http
-POST /api/v1/auth/login
+POST /api/v1/login
 ```
 
 Endpoints:
 
+- `POST /api/v1/register` (Student registration; sends a signed email verification link)
+- `POST /api/v1/email/verification-notification` (resend the Student verification email)
+- `GET /api/v1/email/verify/{id}/{hash}` (signed email verification link)
+- `POST /api/v1/login`, `GET /api/v1/me`, and `POST /api/v1/logout`
 - `GET /api/v1/classes`
 - `GET /api/v1/quizzes` and `GET /api/v1/quizzes/{id}/download` (quiz questions/options)
 - `GET /api/v1/assignments` and `GET /api/v1/assignments/{id}/download` (assignment instructions and attachment URL)
@@ -218,6 +222,43 @@ php artisan test
 ## PWA
 
 Students can install EduSync on their home screen. The service worker caches assets and IndexedDB stores offline quiz data and sync queue entries.
+
+## Flutter Student Android app
+
+The standalone Student client lives in `student_app/`; the existing Laravel
+Admin, Teacher, and web Student modules continue to use the same backend and
+database. Android debug builds use `API_BASE_URL` in `student_app/.env` or the
+`--dart-define=API_BASE_URL=...` build-time option. Use
+`http://10.0.2.2:8000/api/v1` for the Android emulator, or
+`http://<PC-LAN-IP>:8000/api/v1` for a physical Android device on the same
+Wi-Fi; run Laravel with `php artisan serve --host=0.0.0.0 --port=8000` and allow
+port 8000 through the private-network firewall. Android release builds require
+an explicitly supplied deployed HTTPS URL and do not use `.env` as a fallback.
+No production host is assumed. Chrome running on the development PC uses
+`API_BASE_URL_WEB`. Email verification links require the Laravel mail transport
+and `APP_URL` to be configured for the deployed backend.
+
+```powershell
+Set-Location student_app
+Copy-Item .env.example .env
+flutter pub get
+flutter run -d chrome
+flutter run -d <android-device-id> --dart-define=API_BASE_URL=http://<PC-LAN-IP>:8000/api/v1
+flutter clean
+flutter pub get
+flutter build apk --release --dart-define=API_BASE_URL=https://<your-deployed-host>/api/v1
+```
+
+Run one of the `flutter run` commands for the target you are testing. Start the
+Laravel server separately and confirm `http://127.0.0.1:8000/up` responds before
+signing in from Chrome.
+
+The release APK is written to `student_app/build/app/outputs/flutter-apk/app-release.apk`.
+The generated Android release configuration uses a development signing key;
+configure a private release keystore before distributing the app through a store.
+The Flutter app caches API data and downloaded learning resources in SQLite/app
+storage, saves quiz and assignment drafts locally, and retries UUID-idempotent
+submission queue entries when connectivity returns.
 
 ## License
 

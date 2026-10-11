@@ -3,10 +3,7 @@
 @section('header', 'Classes')
 
 @section('content')
-<div class="flex justify-between mb-4">
-    <p class="text-sm text-slate-500">{{ $classes->count() }} class(es)</p>
-    <a href="{{ route('teacher.classes.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm">Add Class</a>
-</div>
+<p class="text-sm text-slate-500 mb-4">{{ $classes->count() }} class(es)</p>
 
 <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
     <div class="overflow-x-auto">

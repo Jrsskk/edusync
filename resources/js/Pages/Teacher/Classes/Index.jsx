@@ -6,12 +6,11 @@ export default function Index({ classes }) {
         <TeacherLayout title="Classes">
             <Head title="Classes" />
 
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-6">
                 <div>
                     <p className="font-semibold text-slate-900">Your teaching load</p>
                     <p className="text-sm text-slate-500">{classes.length} {classes.length === 1 ? 'class' : 'classes'} this academic year</p>
                 </div>
-                <Link href="/teacher/classes/create" className="portal-btn-primary">Create Class</Link>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

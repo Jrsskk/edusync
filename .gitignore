@@ -11,6 +11,8 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/student_app/.env
+/student_app/android/key.properties
 /auth.json
 /node_modules
 /public/build
